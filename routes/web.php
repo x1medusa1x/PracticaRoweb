@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BoardsController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,9 +34,11 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::middleware(['admin'])->group(function () {
-        Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users.all');
-         Route::post('/users', [\App\Http\Controllers\AdminController::class, 'editUser'])->name('EditUser');
-         Route::get('/users/{id}', [\App\Http\Controllers\AdminController::class, 'editUser'])->name('EditUserAjax');
+        Route::get('/users', [AdminController::class, 'users'])->name('users.all');
+        Route::put('/edit-user', [AdminController::class, 'editUser'])->name('EditUser');
+        Route::delete('/delete-user', [AdminController::class, 'deleteUser'])->name('DeleteUser');
+
     });
-    Route::get('/boards', [\App\Http\Controllers\BoardsController::class, 'boards'])->name('boards');
+    Route::get('/boards', [BoardsController::class, 'boards'])->name('boards');
+    Route::delete('/delete-board', [BoardsController::class, 'deleteBoard'])->name('DeleteBoard');
 });

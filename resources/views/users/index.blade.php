@@ -86,8 +86,9 @@
 
         <div class="modal fade" id="edit-modal" >
             <div class="modal-dialog">
-                <form action="" method="POST" name = "selectedUser" value = "">
+                <form action="{{route('EditUser')}}" method="POST" id = "editUser">
                   @csrf
+                  @method('PUT')
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title">Edit user</h4>
@@ -97,10 +98,10 @@
                         </div>
                         <div class="modal-body">
                             <div id="editName"></div>
-                            <input type="hidden" name="editId" value="" />
+                            <input type="hidden" name="editId" id = "editId" />
                             <div class="form-group">
                                 <label for="editRole">Role</label>
-                                <select class="custom-select rounded-0" id="editRole" name = "role" >
+                                <select class="custom-select rounded-0" id = "editRole" name = "role" >
                                     <option value="{{\App\Models\User::ROLE_USER}}">User</option>
                                     <option value="{{\App\Models\User::ROLE_ADMIN}}">Admin</option>
                                 </select>
@@ -108,7 +109,7 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button id = 'edit' type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </form>
@@ -119,22 +120,27 @@
 
         <div class="modal fade" id="delete-modal">
             <div class="modal-dialog">
+              <form action="{{route('DeleteUser')}}" method="POST" id = "deleteUser">
+                @csrf
+                @method('DELETE')
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Default Modal</h4>
+                        <h4 class="modal-title">Delete User</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>One fine body&hellip;</p>
+                        <div>Are you sure you want to delete this entry? </div>
+                        <input type="hidden" name="deleteId" id = "deleteId" />
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Yes</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
+              </form>
             </div>
             <!-- /.modal-dialog -->
         </div>

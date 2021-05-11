@@ -46,9 +46,9 @@
 
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn btn-xs btn-primary" type="button" data-board="{{json_encode($board)}}" data-toggle="modal" data-target="#edit-modal">
+                                        <button class="btn btn-xs btn-primary" type="button" data-board="{{json_encode($board)}}" data-toggle="modal" data-target="#editBoard-modal">
                                             <i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-xs btn-danger" type="button" data-board="{{json_encode($board)}}" data-toggle="modal" data-target="#delete-modal">
+                                        <button class="btn btn-xs btn-danger" type="button" data-board="{{json_encode($board)}}" data-toggle="modal" data-target="#deleteBoard-modal">
                                             <i class="fas fa-trash"></i></button>
                                     </div>
                                 </td>
@@ -75,7 +75,7 @@
         </div>
         <!-- /.card -->
 
-        <div class="modal fade" id="edit-modal" >
+        <div class="modal fade" id="editBoard-modal" >
             <div class="modal-dialog">
                 <form action="" method="POST" name = "selectedboard" value = "">
                   @csrf
@@ -90,7 +90,7 @@
                             <div id="editName"></div>
                             <input type="hidden" name="editId" value="" />
                             <div class="form-group">
-                                <label for="editRole">Role</label>
+                                <label for="editRole">To be continued...</label>
                                 <!-- <select class="custom-select rounded-0" id="editRole" name = "role" >
                                     <option value="{{\App\Models\User::ROLE_USER}}">User</option>
                                     <option value="{{\App\Models\User::ROLE_ADMIN}}">Admin</option>
@@ -108,27 +108,32 @@
             <!-- /.modal-dialog -->
         </div>
 
-        <div class="modal fade" id="delete-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Default Modal</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                <div class="modal fade" id="deleteBoard-modal">
+                    <div class="modal-dialog">
+                      <form action="{{route('DeleteBoard', 'deleteBoardId')}}" method="POST" id = "deleteBoard">
+                        @csrf
+                        @method('DELETE')
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Delete Board</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div>Are you sure you want to delete this entry? (to be continued....)</div>
+                                <input type="hidden" name="deleteBoardId" id = "deleteBoardId" />
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Yes</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                      </form>
                     </div>
-                    <div class="modal-body">
-                        <p>One fine body&hellip;</p>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
+                    <!-- /.modal-dialog -->
                 </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
 
     </section>
     <!-- /.content -->

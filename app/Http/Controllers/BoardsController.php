@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\User;
+use App\Models\Board;
+use App\Models\BoardUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,5 +27,10 @@ class BoardsController extends Controller
               'boards' => $boards
           ]
       );
+    }
+
+    public function deleteBoard(Request $request){
+      $board = Board::find($request->deleteBoardId);
+      dd($request->all());
     }
 }

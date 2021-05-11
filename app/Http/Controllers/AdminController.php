@@ -27,12 +27,22 @@ class AdminController extends Controller
 
 
 /** @param Request $request*/
+
+
     public function editUser(Request $request)
     {
-      $role = $request->get('role');
-      $user_id = $request->get('id');
-      dd($role);
-      #DB::update('update users set name = ? where id = ?',[$role,$user_id]);
-      //return redirect(route('users.all'));
+      $user = User::find($request->editId);
+      $user->role = $request->role;
+      $user->save();
+      return back();
     }
+
+  /** @param Request $request*/
+
+    public function deleteUser(Request $request){
+      $user = User::find($request->deleteId);
+      $user->delete();
+      return back();
+  }
+
 }
