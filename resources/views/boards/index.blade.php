@@ -10,8 +10,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Blank Page</li>
+                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Boards</li>
                     </ol>
                 </div>
             </div>
@@ -24,16 +24,17 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Bordered Table</h3>
+                <h3 class="card-title">Boards list</h3>
             </div>
-            <!-- /.card-header -->
+
             <div class="card-body">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>Name</th>
-                            <th>User Id</th>
+                            <th>User</th>
+                            <th>Members</th>
                             <th style="width: 40px">Actions</th>
                         </tr>
                     </thead>
@@ -41,14 +42,26 @@
                         @foreach ($boards as $board)
                             <tr>
                                 <td>{{$board->id}}</td>
-                                <td>{{$board->name}}</td>
-                                <td>{{$board->user_id}}</td>
-
+                                <td>
+                                    <a href="{{route('board.view', ['id' => $board->id])}}" class="link">{{$board->name}}</a>
+                                </td>
+                                <td>{{$user->name}}</td>
+                                <td>
+                                    {{count($board->boardUsers)}}
+                                </td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn btn-xs btn-primary" type="button" data-board="{{json_encode($board)}}" data-toggle="modal" data-target="#editBoard-modal">
+                                        <button class="btn btn-xs btn-primary"
+                                                type="button"
+                                                data-board="{{json_encode($board)}}"
+                                                data-toggle="modal"
+                                                data-target="#boardEditModal">
                                             <i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-xs btn-danger" type="button" data-board="{{json_encode($board)}}" data-toggle="modal" data-target="#deleteBoard-modal">
+                                        <button class="btn btn-xs btn-danger"
+                                                type="button"
+                                                data-board="{{json_encode($board)}}"
+                                                data-toggle="modal"
+                                                data-target="#boardDeleteModal">
                                             <i class="fas fa-trash"></i></button>
                                     </div>
                                 </td>
@@ -66,6 +79,23 @@
                         <li class="page-item"><a class="page-link" href="{{$boards->url(1)}}">1</a></li>
                     @endif
 
+                    @if ($boards->currentPage() > 3)
+                        <li class="page-item"><span class="page-link page-active">...</span></li>
+                    @endif
+                    @if ($boards->currentPage() >= 3)
+                        <li class="page-item"><a class="page-link" href="{{$boards->url($boards->currentPage() - 1)}}">{{$boards->currentPage() - 1}}</a></li>
+                    @endif
+
+                    <li class="page-item"><span class="page-link page-active">{{$boards->currentPage()}}</span></li>
+
+                    @if ($boards->currentPage() <= $boards->lastPage() - 2)
+                        <li class="page-item"><a class="page-link" href="{{$boards->url($boards->currentPage() + 1)}}">{{$boards->currentPage() + 1}}</a></li>
+                    @endif
+
+                    @if ($boards->currentPage() < $boards->lastPage() - 2)
+                        <li class="page-item"><span class="page-link page-active">...</span></li>
+                    @endif
+
                     @if ($boards->currentPage() < $boards->lastPage() )
                         <li class="page-item"><a class="page-link" href="{{$boards->url($boards->lastPage())}}">{{$boards->lastPage()}}</a></li>
                         <li class="page-item"><a class="page-link" href="{{$boards->nextPageUrl()}}">&raquo;</a></li>
@@ -75,65 +105,59 @@
         </div>
         <!-- /.card -->
 
-        <div class="modal fade" id="editBoard-modal" >
+        <div class="modal fade" id="boardEditModal">
             <div class="modal-dialog">
-                <form action="" method="POST" name = "selectedboard" value = "">
-                  @csrf
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Edit board</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="editName"></div>
-                            <input type="hidden" name="editId" value="" />
-                            <div class="form-group">
-                                <label for="editRole">To be continued...</label>
-                                <!-- <select class="custom-select rounded-0" id="editRole" name = "role" >
-                                    <option value="{{\App\Models\User::ROLE_USER}}">User</option>
-                                    <option value="{{\App\Models\User::ROLE_ADMIN}}">Admin</option>
-                                </select> -->
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
+              <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit board</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </form>
+                    <div class="modal-body">
+                      <div class="alert alert-danger hidden" id="boardEditAlert"></div>
+                      <h5 class="modal-title">Board Name:</h5>
+                      <input type="text" style= "width: 100%" name="boardEditName" id = "boardEditName">
+                      <h5 class="modal-title">Users assigned:</h5>
+                      <input type="hidden" value = "" id = "boardEditId"/>
+                      <select class="js-example-theme-multiple" style= "width: 100%;" name="state" multiple="multiple" id = "boardEditId js-example-theme-multiple">
+                        <!-- SELECT2 NOT FUNCTIONAL YET, TO BE CONTINUED..... -->
+                        <option value="aa">ss</option>
+                      </select>
+
+                  </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="boardEditButton">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="boardDeleteModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete board</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger hidden" id="boardDeleteAlert"></div>
+                        <input type="hidden" id="boardDeleteId" value="" />
+                        <p>Are you sure you want to delete: <span id="boardDeleteName"></span>?</p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="boardDeleteButton">Delete</button>
+                    </div>
+                </div>
                 <!-- /.modal-content -->
             </div>
             <!-- /.modal-dialog -->
         </div>
-
-                <div class="modal fade" id="deleteBoard-modal">
-                    <div class="modal-dialog">
-                      <form action="{{route('DeleteBoard', 'deleteBoardId')}}" method="POST" id = "deleteBoard">
-                        @csrf
-                        @method('DELETE')
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Delete Board</h4>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div>Are you sure you want to delete this entry? (to be continued....)</div>
-                                <input type="hidden" name="deleteBoardId" id = "deleteBoardId" />
-                            </div>
-                            <div class="modal-footer justify-content-between">
-                                <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger">Yes</button>
-                            </div>
-                        </div>
-                        <!-- /.modal-content -->
-                      </form>
-                    </div>
-                    <!-- /.modal-dialog -->
-                </div>
 
     </section>
     <!-- /.content -->

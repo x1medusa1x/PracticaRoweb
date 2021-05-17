@@ -27,6 +27,7 @@ class AdminSeeder extends Seeder
         $admin->password = Hash::make('parola');
         $admin->role = User::ROLE_ADMIN;
         $admin->email_verified_at = now();
+
         $admin->save();
     }
 }
