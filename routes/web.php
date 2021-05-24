@@ -41,9 +41,13 @@ Route::middleware(['verified'])->group(function () {
     });
 
     Route::get('/boards', [BoardController::class, 'boards'])->name('boards.all');
-    Route::get('/board/update/{id}', [BoardController::class, 'updateBoard'])->name('boards.update');
+    Route::post('/board/update/{id}', [BoardController::class, 'updateBoard'])->name('boards.update');
     Route::post('/board/delete/{id}', [BoardController::class, 'deleteBoard'])->name('boards.delete');
-    Route::post('/board/currentUsers/{id}', [BoardController::class, 'currentBoardUsers'])->name('boards.cbu');
+    Route::post('/board/new/', [BoardController::class, 'newBoard'])->name('boards.new');
 
     Route::get('/board/{id}', [BoardController::class, 'board'])->name('board.view');
+
+    Route::post('/task/update/{id}', [BoardController::class, 'updateTask'])->name('tasks.update');
+    Route::post('/task/delete/{id}', [BoardController::class, 'deleteTask'])->name('tasks.delete');
+    Route::post('/task/new', [BoardController::class, 'newTask'])->name('tasks.new');
 });

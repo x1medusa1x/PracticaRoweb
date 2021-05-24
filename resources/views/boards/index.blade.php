@@ -25,6 +25,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Boards list</h3>
+                <button style = "float: right;" class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#newBoardModal">Create</button>
             </div>
 
             <div class="card-body">
@@ -45,25 +46,27 @@
                                 <td>
                                     <a href="{{route('board.view', ['id' => $board->id])}}" class="link">{{$board->name}}</a>
                                 </td>
-                                <td>{{$user->name}}</td>
+                                <td>{{$board->user->name ?? 'None'}}</td>
                                 <td>
                                     {{count($board->boardUsers)}}
                                 </td>
                                 <td>
-                                    <div class="btn-group">
-                                        <button class="btn btn-xs btn-primary"
-                                                type="button"
-                                                data-board="{{json_encode($board)}}"
-                                                data-toggle="modal"
-                                                data-target="#boardEditModal">
-                                            <i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-xs btn-danger"
-                                                type="button"
-                                                data-board="{{json_encode($board)}}"
-                                                data-toggle="modal"
-                                                data-target="#boardDeleteModal">
-                                            <i class="fas fa-trash"></i></button>
-                                    </div>
+                                    @if (\Illuminate\Support\Facades\Auth::user()->role === \App\Models\User::ROLE_ADMIN)
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-primary"
+                                                    type="button"
+                                                    data-board="{{json_encode($board)}}"
+                                                    data-toggle="modal"
+                                                    data-target="#boardEditModal">
+                                                <i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger"
+                                                    type="button"
+                                                    data-board="{{json_encode($board)}}"
+                                                    data-toggle="modal"
+                                                    data-target="#boardDeleteModal">
+                                                <i class="fas fa-trash"></i></button>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -107,7 +110,7 @@
 
         <div class="modal fade" id="boardEditModal">
             <div class="modal-dialog">
-              <div class="modal-content">
+                <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Edit board</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -115,17 +118,20 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                      <div class="alert alert-danger hidden" id="boardEditAlert"></div>
-                      <h5 class="modal-title">Board Name:</h5>
-                      <input type="text" style= "width: 100%" name="boardEditName" id = "boardEditName">
-                      <h5 class="modal-title">Users assigned:</h5>
-                      <input type="hidden" value = "" id = "boardEditId"/>
-                      <select class="js-example-theme-multiple" style= "width: 100%;" name="state" multiple="multiple" id = "boardEditId js-example-theme-multiple">
-                        <!-- SELECT2 NOT FUNCTIONAL YET, TO BE CONTINUED..... -->
-                        <option value="aa">ss</option>
-                      </select>
-
-                  </form>
+                        <div class="alert alert-danger hidden" id="boardEditAlert"></div>
+                        <input type="hidden" id="boardEditId" value="" />
+                        <div class="form-group">
+                            <label for="boardEditName">Name</label>
+                            <input type="text" class="form-control" id="boardEditName" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="boardEditUsers">Board Users</label>
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select board users" id="boardEditUsers" style="width: 100%;">
+                                @foreach ($userList as $user)
+                                    <option value="{{$user['id']}}">{{$user['name']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -159,6 +165,38 @@
             <!-- /.modal-dialog -->
         </div>
 
+        <div class="modal fade" id="newBoardModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit board</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger hidden" id="newBoardAlert"></div>
+                        <div class="form-group">
+                            <label for="newBoardName">Name</label>
+                            <span value = "newBoardName"></span>
+                            <input type="text" class="form-control" id="newBoardName" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="newBoardUsers">Board Users</label>
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select board users" id="newBoardUsers" style="width: 100%;">
+                                @foreach ($userList as $user)
+                                    <option value="{{$user['id']}}">{{$user['name']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="newBoardButton">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <!-- /.content -->
 @endsection

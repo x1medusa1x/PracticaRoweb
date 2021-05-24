@@ -34,5 +34,4 @@ class TestSeeder extends Seeder
             )
             ->create();
     }
-
 }

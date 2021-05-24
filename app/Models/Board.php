@@ -36,10 +36,24 @@ use Illuminate\Support\Carbon;
  */
 class Board extends Model
 {
+    protected $fillable = ['name'];
     use HasFactory;
 
     /** @var string */
     protected $table = 'boards';
+
+    /**
+     * Boot method
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($board) {
+            $board->boardUsers()->delete();
+            $board->tasks()->delete();
+        });
+    }
 
     /**
      * @return BelongsTo

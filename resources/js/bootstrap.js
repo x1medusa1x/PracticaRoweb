@@ -11,8 +11,8 @@ try {
     });
 
     require('bootstrap');
-    require('admin-lte');
     require('select2');
+    require('admin-lte');
 } catch (e) {
 }
 
